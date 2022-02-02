@@ -1,7 +1,6 @@
 name: Android build
 
 on:
-  push:
   pull_request:
     branches:
       - main
@@ -14,9 +13,8 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v2
 
-      run:
-        echo ${{secrets.FIREBASE_APP_ID}}
-        echo ${{secrets.FIREBASE_TOKEN}}
+      - name: Echo
+        run: echo " ${{secrets.env_firebase.FIREBASE_APP_ID}} ${{secrets.env_firebase.FIREBASE_TOKEN}}"
 
       #      - name: Run Tests
       #        run: ./gradlew test
