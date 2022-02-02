@@ -1,0 +1,27 @@
+name: Android build
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  android_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+
+      - name: Run Tests
+        run: ./gradlew test
+
+      - name: Build Project
+        run: ./gradlew assemble
+
+      - name: Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.3.2
+        with:
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          file: androidApp/build/outputs/apk/debug/androidApp-debug.apk
