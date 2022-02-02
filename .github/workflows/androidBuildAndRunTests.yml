@@ -1,0 +1,22 @@
+name: Android build
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - release
+      - main
+
+jobs:
+  android_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+
+      - name: Build Project
+        run: ./gradlew assemble
+
+      - name: Run Tests
+        run: ./gradlew test
