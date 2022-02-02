@@ -14,22 +14,19 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v2
 
-      - name: Run Tests
-        run: ./gradlew test
+      run:
+        echo ${{secrets.FIREBASE_APP_ID}}
+        echo ${{secrets.FIREBASE_TOKEN}}
 
-      - name: Build Project
-        run: ./gradlew assemble
+      #      - name: Run Tests
+      #        run: ./gradlew test
 
-      - name: Firebase App Distribution Action
-        uses: hasretsariyer/firebase-app-distribution-github-action@v1.0
-        with:
-          app_id: ${{secrets.FIREBASE_APP_ID}}
-          firebase_token: ${{secrets.FIREBASE_TOKEN}}
-          app_file: androidApp/build/outputs/apk/debug/androidApp-debug.apk
-          tester_groups: Internal
-
+#      - name: Build Project
+#        run: ./gradlew assemble
+#
 #      - name: Firebase App Distribution
 #        uses: wzieba/Firebase-Distribution-Github-Action@v1.3.2
+#
 #        with:
 #          appId: ${{secrets.FIREBASE_APP_ID}}
 #          token: ${{secrets.FIREBASE_TOKEN}}
