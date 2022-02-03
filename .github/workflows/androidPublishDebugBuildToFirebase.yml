@@ -13,8 +13,11 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v2
 
+      #      - name: Build Project
+      #        run: ./gradlew bundleDebug
+
       - name: Build Project
-        run: ./gradlew bundleDebug
+        run: ./gradlew assembleDebug
 
       - name: Publish to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.3.2
@@ -22,5 +25,6 @@ jobs:
           appId: ${{secrets.FIREBASE_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: Internal
-          file: androidApp/build/outputs/bundle/debug/androidApp-debug.aab
+          #          file: androidApp/build/outputs/bundle/debug/androidApp-debug.aab
+          file: androidApp/build/outputs/apk/debug/androidApp-debug.apk
           debug: true
