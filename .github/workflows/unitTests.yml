@@ -1,0 +1,84 @@
+name: Build and test debug version
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'releases/**'
+      - develop
+      - bugfix
+
+jobs:
+  unit-test-shared-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: ./gradlew assembleDebug
+
+      - name: Run Shared Unit Tests
+        run: ./gradlew :shared:testDebugUnitTest
+
+  unit-test-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: ./gradlew assembleDebug
+
+      - name: Run Android Unit Tests
+        run: ./gradlew :androidApp:TestDebugUnitTest
+
+  unit-test-shared-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup xcode-select
+        uses: devbotsxyz/xcode-select@v1
+
+      - name: Install cocoapods-generate
+        run: gem install cocoapods-generate
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Build
+        run: ./gradlew assembleDebug
+
+      - name: Run Shared Unit Tests
+        run: ./gradlew :shared:IosX64Test
+
+  unit-test-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup xcode-select
+        uses: devbotsxyz/xcode-select@v1
+
+      - name: Install cocoapods-generate
+        run: gem install cocoapods-generate
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Build
+        run: ./gradlew assembleDebug
+
+      - name: Run iOS Unit Tests
+        run: xcodebuild test -workspace "iosApp/iosApp.xcworkspace" -scheme iosApp -destination 'platform=iOS Simulator,name=iPhone 12'
