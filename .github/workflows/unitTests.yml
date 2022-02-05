@@ -9,33 +9,41 @@ on:
       - bugfix
 
 jobs:
-  unit-test-shared-android:
+  build:
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Build
         run: ./gradlew assembleDebug
+
+  unit-test-shared-android:
+    name: Unit Test Shared Android
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Run Shared Unit Tests
         run: ./gradlew :shared:testDebugUnitTest
 
   unit-test-android:
+    name: Unit Test Android
+    needs: [ unit-test-shared-android, unit-test-shared-ios ]
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Build
-        run: ./gradlew assembleDebug
 
       - name: Run Android Unit Tests
         run: ./gradlew :androidApp:TestDebugUnitTest
 
   unit-test-shared-ios:
+    name: Unit Test Shared iOS
+    needs: build
     runs-on: macos-latest
 
     steps:
@@ -52,14 +60,13 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
-
-      - name: Build
-        run: ./gradlew assembleDebug
 
       - name: Run Shared Unit Tests
         run: ./gradlew :shared:IosX64Test
 
   unit-test-ios:
+    name: Unit Test iOS
+    needs: [ unit-test-shared-android, unit-test-shared-ios ]
     runs-on: macos-latest
 
     steps:
@@ -77,8 +84,11 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
-      - name: Build
-        run: ./gradlew assembleDebug
+      - name: Fix shared module issue
+        run: ./gradlew generateDummyFramework
+
+      - name: Pod Install
+        run: pod install --project-directory=iosApp
 
       - name: Run iOS Unit Tests
-        run: xcodebuild test -workspace "iosApp/iosApp.xcworkspace" -scheme iosApp -destination 'platform=iOS Simulator,name=iPhone 12'
+        run: xcodebuild clean test -workspace iosApp/iosApp.xcworkspace -scheme iosApp -destination 'platform=iOS Simulator,name=iPhone 12'
